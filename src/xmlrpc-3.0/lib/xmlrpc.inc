@@ -500,6 +500,7 @@
 					$GLOBALS['_xh']['vt']=null;
 					break;
 				case 'NIL':
+					break;
 				case 'EX:NIL':
 					if ($GLOBALS['xmlrpc_null_extension'])
 					{
