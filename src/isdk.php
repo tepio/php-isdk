@@ -218,7 +218,15 @@ public function updateCon($cid, $cMap) {
                     php_xmlrpc_encode($cMap,array('auto_dates')));
     return $this->methodCaller("ContactService.update",$carray);
 }
-
+###function to merge existing contacts
+public function mergeCon($cid, $dcid) {
+	$carray = array(
+			php_xmlrpc_encode($this->key),
+			php_xmlrpc_encode($cid),
+			php_xmlrpc_encode($dcid));
+	
+	return $this->methodCaller("ContactService.merge",$carray);
+}
 ###Finds all contacts for an Email###
 public function findByEmail($eml, $fMap) {
 
