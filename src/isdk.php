@@ -15,10 +15,11 @@ class iSDK {
 //////////CONNECTOR/////////////
 ////////////////////////////////
 
-  public function iSDK() {
-    $this->test_string = sha1(time());
-  }
+var $test_string;
 
+public function iSDK() {
+  $this->test_string = sha1(time());
+}
 
 ###Connect from an entry in the config file###
 public function cfgCon($name,$dbOn="on") {
