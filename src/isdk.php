@@ -15,6 +15,11 @@ class iSDK {
 //////////CONNECTOR/////////////
 ////////////////////////////////
 
+var $test_string;
+
+public function iSDK() {
+  $this->test_string = sha1(time());
+}
 
 ###Connect from an entry in the config file###
 public function cfgCon($name,$dbOn="on") {
@@ -50,12 +55,14 @@ public function cfgCon($name,$dbOn="on") {
   $this->key = $details[$name][3];
 
 //connection verification
-  $result = $this->dsGetSetting('Contact', 'optiontypes');
-  if (strpos($result, 'InvalidKey') == 12) {
-    return FALSE;
-  } else { return TRUE; }
+  $test_conn = $this->appEcho($this->test_string);
 
-  return TRUE;
+  if( $test_conn == $this->test_string ) {
+    return true;
+  } else {
+    return false;
+  }
+
 }
 
 ###Connect using API credentials stored in a database###
