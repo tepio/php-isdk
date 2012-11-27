@@ -58,6 +58,40 @@ public function cfgCon($name,$dbOn="on") {
   return TRUE;
 }
 
+###Connect using API credentials stored in a database###
+public function stdCon($appName,$key,$dbOn="on",$type="i") {
+  $this->debug = $dbOn;
+  include('conn.cfg.php');
+  if(!empty($appName)) {
+    if($type=="i") {
+      $this->client = new xmlrpc_client("https://".$appName.".infusionsoft.com/api/xmlrpc");
+    } else {
+      $this->client = new xmlrpc_client("https://".$appName.".mortgageprocrm.com/api/xmlrpc");
+    } else {
+      throw new Exception ("Invalid configuration for name: \"" . $appName . "\"");
+    }
+  } else {
+    throw new Exception("Invalid configuration name: \"" . $appName . "\"");
+  }
+
+  ###Return Raw PHP Types###
+  $this->client->return_type = "phpvals";
+
+  ###Dont bother with certificate verification###
+  $this->client->setSSLVerifyPeer(FALSE);
+  //$this->client->setDebug(2);
+  ###API Key###
+  $this->key = $key;
+
+//connection verification
+  $result = $this->dsGetSetting('Contact', 'optiontypes');
+  if (strpos($result, 'InvalidKey') == 12) {
+    return FALSE;
+  } else { return TRUE; }
+
+  return TRUE;
+}
+
 ###Connect and Obtain an API key from a vendor key###
 public function vendorCon($name,$user,$pass,$dbOn="on") {
   $this->debug = $dbOn;
