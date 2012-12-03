@@ -72,7 +72,7 @@ public function stdCon($appName,$key,$dbOn="on",$type="i") {
   if(!empty($appName)) {
     if($type=="i") {
       $this->client = new xmlrpc_client("https://".$appName.".infusionsoft.com/api/xmlrpc");
-    } else {
+    } else if($type=="m") {
       $this->client = new xmlrpc_client("https://".$appName.".mortgageprocrm.com/api/xmlrpc");
     } else {
       throw new Exception ("Invalid configuration for name: \"" . $appName . "\"");
