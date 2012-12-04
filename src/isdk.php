@@ -65,7 +65,7 @@ public function cfgCon($name,$dbOn="on") {
 
 }
 
-###Connect using API credentials stored in a database###
+###Connect using API credentials###
 public function stdCon($appName,$key,$dbOn="on",$type="i") {
   $this->debug = $dbOn;
   include('conn.cfg.php');
