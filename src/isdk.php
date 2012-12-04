@@ -54,7 +54,7 @@ public function cfgCon($name,$dbOn="on") {
   ###API Key###
   $this->key = $details[$name][3];
 
-//connection verification
+  ###Connection verification###
   $test_conn = $this->appEcho($this->test_string);
 
   if( $test_conn == $this->test_string ) {
@@ -90,7 +90,7 @@ public function stdCon($appName,$key,$dbOn="on",$type="i") {
   ###API Key###
   $this->key = $key;
 
-//connection verification
+  ###Connection verification###
   $result = $this->dsGetSetting('Contact', 'optiontypes');
   if (strpos($result, 'InvalidKey') == 12) {
     return FALSE;
