@@ -54,7 +54,7 @@ public function cfgCon($name,$dbOn="on") {
   ###API Key###
   $this->key = $details[$name][3];
 
-//connection verification
+  ###Connection verification###
   $test_conn = $this->appEcho($this->test_string);
 
   if( $test_conn == $this->test_string ) {
@@ -65,20 +65,20 @@ public function cfgCon($name,$dbOn="on") {
 
 }
 
-###Connect using API credentials stored in a database###
+###Connect using API credentials###
 public function stdCon($appName,$key,$dbOn="on",$type="i") {
   $this->debug = $dbOn;
-  include('conn.cfg.php');
+
   if(!empty($appName)) {
     if($type=="i") {
-      $this->client = new xmlrpc_client("https://".$appName.".infusionsoft.com/api/xmlrpc");
+      $this->client = new xmlrpc_client("https://$appName.infusionsoft.com/api/xmlrpc");
     } else if($type=="m") {
-      $this->client = new xmlrpc_client("https://".$appName.".mortgageprocrm.com/api/xmlrpc");
+      $this->client = new xmlrpc_client("https://$appName.mortgageprocrm.com/api/xmlrpc");
     } else {
-      throw new Exception ("Invalid configuration for name: \"" . $appName . "\"");
+      throw new Exception ("Invalid application type: \"$appName\"");
     }
   } else {
-    throw new Exception("Invalid configuration name: \"" . $appName . "\"");
+    throw new Exception("Invalid application name: \"$appName\"");
   }
 
   ###Return Raw PHP Types###
@@ -90,13 +90,9 @@ public function stdCon($appName,$key,$dbOn="on",$type="i") {
   ###API Key###
   $this->key = $key;
 
-//connection verification
-  $result = $this->dsGetSetting('Contact', 'optiontypes');
-  if (strpos($result, 'InvalidKey') == 12) {
-    return FALSE;
-  } else { return TRUE; }
-
-  return TRUE;
+  ###Connection verification###
+  $test_conn = $this->appEcho($this->test_string);
+  return ($test_conn == $this->test_string);
 }
 
 ###Connect and Obtain an API key from a vendor key###
