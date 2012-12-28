@@ -2,8 +2,8 @@
 ##########################################################################
 #########        Object Oriented PHP SDK for Infusionsoft        #########
 #########           Created by Justin Morris on 09-10-08         #########
-#########           Updated by Michael Fairchild on 10-09-12     #########
-#########           Version 1.7.14                               #########
+#########           Updated by Michael Fairchild on 12-28-12     #########
+#########           Version 1.27.7.27 (Same as app version)      #########
 ##########################################################################
 
 if(!function_exists('xmlrpc_encode_entitites')) {
@@ -21,64 +21,38 @@ public function iSDK() {
   $this->test_string = sha1(time());
 }
 
-###Connect from an entry in the config file###
-public function cfgCon($name,$dbOn="on") {
+###Connect by using the Connection file or by passing in the variables###
+public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
   $this->debug = $dbOn;
-  include('conn.cfg.php');
-  $appLines = $connInfo;
-  foreach($appLines as $appLine){
-    $details[substr($appLine,0,strpos($appLine,":"))] = explode(":",$appLine);
-  }
-
-  if (!empty($details[$name])) {
-    if ($details[$name][2]=="i") {
-      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
-".infusionsoft.com/api/xmlrpc");
-    } elseif ($details[$name][2]=="m") {
-      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
-".mortgageprocrm.com/api/xmlrpc");
-    } else {
-        throw new Exception("Invalid configuration for name: \"" . $name . "\"");
-    }
-  } else {
-    throw new Exception("Invalid configuration name: \"" . $name . "\"");
-  }
-
-
-  ###Return Raw PHP Types###
-  $this->client->return_type = "phpvals";
-
-  ###Dont bother with certificate verification###
-  $this->client->setSSLVerifyPeer(FALSE);
-  //$this->client->setDebug(2);
-  ###API Key###
-  $this->key = $details[$name][3];
-
-  ###Connection verification###
-  $test_conn = $this->appEcho($this->test_string);
-
-  if( $test_conn == $this->test_string ) {
-    return true;
-  } else {
-    return false;
-  }
-
-}
-
-###Connect using API credentials###
-public function stdCon($appName,$key,$dbOn="on",$type="i") {
-  $this->debug = $dbOn;
-
-  if(!empty($appName)) {
-    if($type=="i") {
-      $this->client = new xmlrpc_client("https://$appName.infusionsoft.com/api/xmlrpc");
-    } else if($type=="m") {
-      $this->client = new xmlrpc_client("https://$appName.mortgageprocrm.com/api/xmlrpc");
-    } else {
-      throw new Exception ("Invalid application type: \"$appName\"");
-    }
-  } else {
-    throw new Exception("Invalid application name: \"$appName\"");
+  if($key != "") {
+  	if($type=="i") {
+  		$this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
+  	} else if($type=="m") {
+  		$this->client = new xmlrpc_client("https://$name.mortgageprocrm.com/api/xmlrpc");
+  	} else {
+  		throw new Exception ("Invalid application type: \"$name\"");
+  	}  
+  	$this->key = $key;	
+  }else{
+  	include('conn.cfg.php');
+  	$appLines = $connInfo;
+  	foreach($appLines as $appLine){
+  		$details[substr($appLine,0,strpos($appLine,":"))] = explode(":",$appLine);
+  	}
+  	if (!empty($details[$name])) {
+	    if ($details[$name][2]=="i") {
+	      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
+	".infusionsoft.com/api/xmlrpc");
+	    } elseif ($details[$name][2]=="m") {
+	      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
+	".mortgageprocrm.com/api/xmlrpc");
+	    } else {
+	        throw new Exception("Invalid application name: \"" . $name . "\"");
+	    }
+	  } else {
+	    throw new Exception("Application Does Not Exist: \"" . $name . "\"");
+	  }
+	  $this->key = $details[$name][3];
   }
 
   ###Return Raw PHP Types###
@@ -87,30 +61,53 @@ public function stdCon($appName,$key,$dbOn="on",$type="i") {
   ###Dont bother with certificate verification###
   $this->client->setSSLVerifyPeer(FALSE);
   //$this->client->setDebug(2);
-  ###API Key###
-  $this->key = $key;
-
+  
   ###Connection verification###
-  $test_conn = $this->appEcho($this->test_string);
-  return ($test_conn == $this->test_string);
+  try{
+    $connected = $this->dsGetSetting("Application","enabled");
+  }catch (Exception $e){
+    throw new Exception("Connection Failed");
+  }
+  if($connected != 'yes'){
+  	throw new Exception("Application is disabled");
+  }else {
+  	return true;
+  }
+
 }
 
 ###Connect and Obtain an API key from a vendor key###
-public function vendorCon($name,$user,$pass,$dbOn="on") {
+public function vendorCon($name,$user,$pass,$key= "",$type="i", $dbOn="on") {
   $this->debug = $dbOn;
-  include('conn.cfg.php');
-  $appLines = $connInfo;
-  foreach($appLines as $appLine){
-    $details[substr($appLine,0,strpos($appLine,":"))] = explode(":",$appLine);
-  }
-  if (!empty($details[$name])) {
-    if ($details[$name][2]=="i") {
-      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
-".infusionsoft.com/api/xmlrpc");
-    } elseif ($details[$name][2]=="m") {
-      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
-".mortgageprocrm.com/api/xmlrpc");
-    } else { return FALSE;}
+ if($key != "") {
+  	if($type=="i") {
+  		$this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
+  	} else if($type=="m") {
+  		$this->client = new xmlrpc_client("https://$name.mortgageprocrm.com/api/xmlrpc");
+  	} else {
+  		throw new Exception ("Invalid application type: \"$name\"");
+  	}  
+  	$this->key = $key;	
+  }else{
+  	include('conn.cfg.php');
+  	$appLines = $connInfo;
+  	foreach($appLines as $appLine){
+  		$details[substr($appLine,0,strpos($appLine,":"))] = explode(":",$appLine);
+  	}
+  	if (!empty($details[$name])) {
+	    if ($details[$name][2]=="i") {
+	      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
+	".infusionsoft.com/api/xmlrpc");
+	    } elseif ($details[$name][2]=="m") {
+	      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
+	".mortgageprocrm.com/api/xmlrpc");
+	    } else {
+	        throw new Exception("Invalid application name: \"" . $name . "\"");
+	    }
+	  } else {
+	    throw new Exception("Application Does Not Exist: \"" . $name . "\"");
+	  }
+	  $this->key = $details[$name][3];
   }
 
 
@@ -119,9 +116,6 @@ public function vendorCon($name,$user,$pass,$dbOn="on") {
 
   ###Dont bother with certificate verification###
   $this->client->setSSLVerifyPeer(FALSE);
-
-  ###API Key###
-  $this->key = $details[$name][3];
 
   $carray = array(
     php_xmlrpc_encode($this->key),
@@ -130,11 +124,16 @@ public function vendorCon($name,$user,$pass,$dbOn="on") {
 
   $this->key = $this->methodCaller("DataService.getTemporaryKey",$carray);
 
-  if ($this->appEcho("connected?")) {
-    return TRUE;
-  } else { return FALSE; }
-
-  return TRUE;
+  try{
+    $connected = $this->dsGetSetting("Application","enabled");
+  }catch (Exception $e){
+    throw new Exception("Connection Failed");
+  }
+  if($connected != 'yes'){
+  	throw new Exception("Application is disabled");
+  }else {
+  	return TRUE;
+  }
 }
 
 ###Worthless public function, used to validate a connection###
