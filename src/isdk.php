@@ -48,7 +48,6 @@ public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
   		$this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
   		break;
   }
-
   ###Return Raw PHP Types###
   $this->client->return_type = "phpvals";
 
@@ -69,7 +68,6 @@ public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
   }
 
 }
-
 ###Connect and Obtain an API key from a vendor key###
 public function vendorCon($name,$user,$pass,$key= "", $dbOn="on",$type="i") {
   
@@ -105,8 +103,6 @@ public function vendorCon($name,$user,$pass,$key= "", $dbOn="on",$type="i") {
 	  }
 	  $this->key = $details[$name][3];
   }
-
-
   ###Return Raw PHP Types###
   $this->client->return_type = "phpvals";
 
@@ -161,8 +157,6 @@ $result->faultString();
       }
     }
 }
-
-
 /////////////////////////////////////////////////////////
 //////////////////// FILE  SERVICE ////////////////////// /////////////////////////////////////////////////////////
 //Available in Version 18.x+
@@ -175,7 +169,6 @@ public function getFile($fileID) {
     $result = $this->methodCaller("FileService.getFile",$carray);
     return $result;
 }
-
 //int uploadFile(String key, String fileName, String base64encoded) - returns file id
 public function uploadFile($fileName,$base64Enc,$cid=0) {
     $result = 0;
@@ -224,7 +217,6 @@ public function getDownloadUrl($fileID) {
     $result = $this->methodCaller("FileService.getDownloadUrl",$carray);
     return $result;
 }
-
 
 /////////////////////////////////////////////////////////
 ////////////////////CONTACT SERVICE////////////////////// /////////////////////////////////////////////////////////
@@ -393,7 +385,6 @@ public function dsGetSetting($module,$setting) {
                     php_xmlrpc_encode($setting));
     return $this->methodCaller("DataService.getAppSetting",$carray);
 }
-
 
 public function dsAdd($tName,$iMap) {
     $carray = array(
@@ -1502,10 +1493,12 @@ public function getShippingTotalDiscount($id) {
      * @param processSpecials Whether or not the order should consider discounts that would normally be applied if this order
      *        was being placed through the shopping cart.
      * @param promoCodes Any promo codes to add to the cart, only used if processing of specials is turned on.
+     * @param leadAff is the Lead Affiliate.
+     * @param saleAff is the Affiliate of the sale.
      * @return The result of the order placement.
      *
      */
-public function placeOrder($contactId, $creditCardId, $payPlanId, $productIds, $subscriptionIds, $processSpecials, $promoCodes){
+public function placeOrder($contactId, $creditCardId, $payPlanId, $productIds, $subscriptionIds, $processSpecials, $promoCodes, $leadAff = 0,$saleAff = 0){
   $carray = array(
     php_xmlrpc_encode($this->key),
     php_xmlrpc_encode((int)$contactId),
@@ -1514,7 +1507,9 @@ public function placeOrder($contactId, $creditCardId, $payPlanId, $productIds, $
     php_xmlrpc_encode($productIds),
     php_xmlrpc_encode($subscriptionIds),
     php_xmlrpc_encode($processSpecials),
-    php_xmlrpc_encode($promoCodes));
+    php_xmlrpc_encode($promoCodes),
+    php_xmlrpc_encode((int)$leadAff),
+    php_xmlrpc_encode((int)$saleAff));
   return $this->methodCaller("OrderService.placeOrder",$carray);
 }
 
