@@ -27,34 +27,26 @@ public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
   $this->debug = (($key == 'on' || $key == 'off') ? $key : $dbOn);
   
   if($key != "" && $key != "on" && $key != "off") {
-  	if($type=="i") {
-  		$this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
-  	} else if($type=="m") {
-  		$this->client = new xmlrpc_client("https://$name.mortgageprocrm.com/api/xmlrpc");
-  	} else {
-  		throw new Exception ("Invalid application type: \"$name\"");
-  	}  
-  	$this->key = $key;	
+  	$this->key = $key;
   }else{
   	include('conn.cfg.php');
   	$appLines = $connInfo;
   	foreach($appLines as $appLine){
   		$details[substr($appLine,0,strpos($appLine,":"))] = explode(":",$appLine);
   	}
-  	if (!empty($details[$name])) {
-	    if ($details[$name][2]=="i") {
-	      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
-	".infusionsoft.com/api/xmlrpc");
-	    } elseif ($details[$name][2]=="m") {
-	      $this->client = new xmlrpc_client("https://" . $details[$name][1] .
-	".mortgageprocrm.com/api/xmlrpc");
-	    } else {
-	        throw new Exception("Invalid application name: \"" . $name . "\"");
-	    }
-	  } else {
-	    throw new Exception("Application Does Not Exist: \"" . $name . "\"");
-	  }
-	  $this->key = $details[$name][3];
+  	$name = $details[$name][1];
+  	$type = $details[$name][2];
+  	$this->key = $details[$name][3];
+  }
+  
+  switch ($type){
+  	case 'm':
+  		$this->client = new xmlrpc_client("https://$name.mortgageprocrm.com/api/xmlrpc");
+  		break;
+  	case 'i':
+  	default:
+  		$this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
+  		break;
   }
 
   ###Return Raw PHP Types###
