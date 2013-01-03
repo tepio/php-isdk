@@ -57,15 +57,12 @@ public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
   
   ###Connection verification###
   try{
-    $connected = $this->dsGetSetting("Application","enabled");
+    $connected = $this->dsGetSetting("Contact","optiontypes");
   }catch (Exception $e){
     throw new Exception("Connection Failed");
   }
-  if($connected != 'yes'){
-  	throw new Exception("Application is disabled");
-  }else {
-  	return true;
-  }
+
+  return true;
 
 }
 ###Connect and Obtain an API key from a vendor key###
@@ -116,16 +113,13 @@ public function vendorCon($name,$user,$pass,$key= "", $dbOn="on",$type="i") {
 
   $this->key = $this->methodCaller("DataService.getTemporaryKey",$carray);
 
-  try{
-    $connected = $this->dsGetSetting("Application","enabled");
-  }catch (Exception $e){
-    throw new Exception("Connection Failed");
-  }
-  if($connected != 'yes'){
-  	throw new Exception("Application is disabled");
-  }else {
-  	return TRUE;
-  }
+    try{
+        $connected = $this->dsGetSetting("Contact","optiontypes");
+    }catch (Exception $e){
+        throw new Exception("Connection Failed");
+    }
+
+    return true;
 }
 
 ###Worthless public function, used to validate a connection###
