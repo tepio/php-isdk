@@ -34,18 +34,18 @@ public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
   	foreach($appLines as $appLine){
   		$details[substr($appLine,0,strpos($appLine,":"))] = explode(":",$appLine);
   	}
-  	$name = $details[$name][1];
+  	$appname = $details[$name][1];
   	$type = $details[$name][2];
   	$this->key = $details[$name][3];
   }
   
   switch ($type){
   	case 'm':
-  		$this->client = new xmlrpc_client("https://$name.mortgageprocrm.com/api/xmlrpc");
+  		$this->client = new xmlrpc_client("https://$appname.mortgageprocrm.com/api/xmlrpc");
   		break;
   	case 'i':
   	default:
-  		$this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
+  		$this->client = new xmlrpc_client("https://$appname.infusionsoft.com/api/xmlrpc");
   		break;
   }
 
