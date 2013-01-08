@@ -2,8 +2,8 @@
 ##########################################################################
 #########        Object Oriented PHP SDK for Infusionsoft        #########
 #########           Created by Justin Morris on 09-10-08         #########
-#########           Updated by Michael Fairchild on 12-28-12     #########
-#########           Version 1.27.7.27 (Same as app version)      #########
+#########           Updated by Michael Fairchild on 01-07-13     #########
+#########           Version 1.28.x    (Same as app version)      #########
 ##########################################################################
 
 if(!function_exists('xmlrpc_encode_entitites')) {
