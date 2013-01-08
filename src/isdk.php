@@ -470,7 +470,20 @@ public function dsQuery($tName,$limit,$page,$query,$rFields) {
 
     return $this->methodCaller("DataService.query",$carray);
 }
+public function dsQueryOrderBy($tName,$limit,$page,$query,$rFields,$orderByField,$ascending = TRUE) {
 
+    $carray = array(
+        php_xmlrpc_encode($this->key),
+        php_xmlrpc_encode($tName),
+        php_xmlrpc_encode((int)$limit),
+        php_xmlrpc_encode((int)$page),
+        php_xmlrpc_encode($query,array('auto_dates')),
+        php_xmlrpc_encode($rFields));
+    php_xmlrpc_encode($orderByField);
+    php_xmlrpc_encode((bool)$ascending);
+
+    return $this->methodCaller("DataService.query",$carray);
+}
 ###Adds a custom field to Infusionsoft###
 public function addCustomField($context,$displayName,$dataType,$groupID) {
 
@@ -1534,6 +1547,49 @@ public function requestCreditCardId($token){
     php_xmlrpc_encode($this->key),
     php_xmlrpc_encode($token));
   return $this->methodCaller("CreditCardSubmissionService.requestCreditCardId",$carray);
+}
+
+public function achieveGoal($integration, $callName, $contactId){
+    $carray = array(
+        php_xmlrpc_encode($this->key),
+        php_xmlrpc_encode($integration),
+        php_xmlrpc_encode($callName),
+        php_xmlrpc_encode($contactId));
+    return $this->methodCaller("FunnelService.achieveGoal",$carray);
+}
+
+public function getAffiliatesByProgram($programId){
+    $carray = array(
+        php_xmlrpc_encode($this->key),
+        php_xmlrpc_encode($programId));
+    return $this->methodCaller("APIAffiliateService.getAffiliatesByProgram",$carray);
+}
+
+public function getProgramsForAffiliate($affiliateId){
+    $carray = array(
+        php_xmlrpc_encode($this->key),
+        php_xmlrpc_encode($affiliateId));
+    return $this->methodCaller("APIAffiliateService.getProgramsForAffiliate",$carray);
+}
+
+public function getAffiliatePrograms(){
+    $carray = array(
+        php_xmlrpc_encode($this->key));
+    return $this->methodCaller("APIAffiliateService.getAffiliatePrograms",$carray);
+}
+
+public function getResourcesForAffiliateProgram($programId){
+    $carray = array(
+        php_xmlrpc_encode($this->key),
+        php_xmlrpc_encode($programId));
+    return $this->methodCaller("APIAffiliateService.getResourcesForAffiliateProgram",$carray);
+}
+
+public function getRedirectLinksForAffiliate($affiliateId){
+    $carray = array(
+    php_xmlrpc_encode($this->key),
+    php_xmlrpc_encode($affiliateId));
+    return $this->methodCaller("APIAffiliateService.getRedirectLinksForAffiliate",$carray);
 }
 
 }
