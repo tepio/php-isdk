@@ -24,9 +24,9 @@ public function iSDK() {
 ###Connect by using the Connection file or by passing in the variables###
 public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
 
-  $this->debug = (($key == 'on' || $key == 'off') ? $key : $dbOn);
+	$this->debug = (($key == 'on' || $key == 'off' || $key == 'kill') ? $key : $dbOn);
   
-  if($key != "" && $key != "on" && $key != "off") {
+  if($key != "" && $key != "on" && $key != "off" && $key != 'kill') {
   	$this->key = $key;
   }else{
   	include('conn.cfg.php');
@@ -68,9 +68,9 @@ public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
 ###Connect and Obtain an API key from a vendor key###
 public function vendorCon($name,$user,$pass,$key= "", $dbOn="on",$type="i") {
   
-  $this->debug = (($key == 'on' || $key == 'off') ? $key : $dbOn);
+	  $this->debug = (($key == 'on' || $key == 'off' || $key == 'kill') ? $key : $dbOn);
   
-  if($key != "" && $key != "on" && $key != "off") {
+  if($key != "" && $key != "on" && $key != "off" && $key != 'kill') {
   	if($type=="i") {
   		$this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
   	} else if($type=="m") {
