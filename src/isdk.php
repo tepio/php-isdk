@@ -45,6 +45,7 @@ public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
   		break;
   	case 'i':
   	default:
+  		if (!isset($appName)){ $appname = $name;}
   		$this->client = new xmlrpc_client("https://$appname.infusionsoft.com/api/xmlrpc");
   		break;
   }
