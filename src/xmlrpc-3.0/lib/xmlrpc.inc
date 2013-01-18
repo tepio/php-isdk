@@ -35,7 +35,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	$GLOBALS['xmlrpcName']='Infusionsoft PHP SDK 1.27.7.27';
+	$GLOBALS['xmlrpcName']='Infusionsoft PHP SDK 1.28.x';
 	$GLOBALS['xmlrpcVersion']='3.0.0.beta';
 
 	if(!function_exists('xml_parser_create'))
