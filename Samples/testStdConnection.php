@@ -7,7 +7,7 @@ require("../src/isdk.php");
 $app = new iSDK;
 echo "created object!<br/>";
 
-if($app->stdCon($app_name, $api_key)) {
+if($app->cfgCon($app_name, $api_key)) {
 	echo "app connected!<br/>"; 
 }	
 else {
