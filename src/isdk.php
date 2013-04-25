@@ -10,6 +10,7 @@ if(!function_exists('xmlrpc_encode_entitites')) {
   include("xmlrpc-3.0/lib/xmlrpc.inc");
 }
 
+class iSDKException extends Exception{}
 class iSDK {
 ////////////////////////////////
 //////////CONNECTOR/////////////
@@ -24,10 +25,10 @@ public function iSDK() {
 ###Connect by using the Connection file or by passing in the variables###
 public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
 
-  $this->debug = (($key == 'on' || $key == 'off' || $key == 'kill') ? $key : $dbOn);
+  $this->debug = (($key == 'on' || $key == 'off' || $key == 'kill' || $key == 'throw') ? $key : $dbOn);
 
   
-  if($key != "" && $key != "on" && $key != "off" && $key != 'kill') {
+  if($key != "" && $key != "on" && $key != "off" && $key != 'kill' && $key != 'throw') {
   	$this->key = $key;
   }else{
   	include('conn.cfg.php');
@@ -72,10 +73,10 @@ public function cfgCon($name, $key = "", $dbOn="on", $type = "i") {
 ###Connect and Obtain an API key from a vendor key###
 public function vendorCon($name,$user,$pass,$key= "", $dbOn="on",$type="i") {
   
-  $this->debug = (($key == 'on' || $key == 'off' || $key == 'kill') ? $key : $dbOn);
+  $this->debug = (($key == 'on' || $key == 'off' || $key == 'kill' || $key == 'throw') ? $key : $dbOn);
 
   
-  if($key != "" && $key != "on" && $key != "off" && $key != 'kill') {
+  if($key != "" && $key != "on" && $key != "off" && $key != 'kill' && $key != 'throw') {
   	if($type=="i") {
   		$this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
   	} else if($type=="m") {
@@ -152,6 +153,8 @@ $result->faultString());
       } elseif ($this->debug=="on") {
         return "ERROR: " . $result->faultCode() . " - " .
 $result->faultString();
+      } elseif ($this->debug=="throw") {
+        throw new iSDKException($result->faultString(), $result->faultCode());
       } elseif ($this->debug=="off") {
         //ignore!
       }
