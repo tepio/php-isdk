@@ -50,6 +50,7 @@ In the script you want to make the API call in you will need to do the following
 3. Next we need to create the connection
 
  - ```$app->cfgCon("connectionName");```
+
  OR
  - ```$app->cfgCon("applicationName", "APIKEYGOESHERE");```
 
