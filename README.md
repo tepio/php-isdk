@@ -50,8 +50,7 @@ In the script you want to make the API call in you will need to do the following
 3. Next we need to create the connection
 
  - ```$app->cfgCon("connectionName");```
-
- OR
+OR
  - ```$app->cfgCon("applicationName", "APIKEYGOESHERE");```
 
 4. Next we will make our first API call using the ContactService.findByEmail method. This method returns contact information by an email address we send
