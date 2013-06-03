@@ -1,19 +1,22 @@
-<?
-require("isdk.php");  
+<?php
 
+require_once("../src/isdk.php");
 $app = new iSDK;
-echo "connected<br/>";
-$app->cfgCon("connectionName");
-	echo "app connected<br/>";    
 
+if ($app->cfgCon("connectionName")) {
 
-$qry = array('Company'=>'');
-$rets= array('Id', 'FirstName');
-$cards=$app->dsQuery("Contact",99,0,$qry,$rets);
+    echo "connected<br/>";
+    echo "app connected<br/>";
 
-	echo "<pre>";
-	print_r($cards);
-	echo "</pre>";
+    $qry = array('Company' => '~null~');
+    $rets = array('Id', 'FirstName');
+    $cards = $app->dsQuery("Contact", 99, 0, $qry, $rets);
 
+    echo "<pre>";
+    print_r($cards);
+    echo "</pre>";
+} else {
+    echo "Connection Failed";
+}
 
 ?>

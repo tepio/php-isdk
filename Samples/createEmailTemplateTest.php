@@ -1,18 +1,20 @@
 <?php
 
-require("isdk.php");  
+require_once("../src/isdk.php");
 
 $app = new iSDK;
-echo "connected<br/>";
-$app->cfgCon("connectionName");
-	echo "app connected<br/>";
 
+if ($app->cfgCon("connectionName")) {
 
-$tmpId = $app->createEmailTemplate("This is my API template",0,"Info@test.com",
-                                   "~Contact.Email~","","","html","My Test Email",
-                                   "<b>This is my test body</b>","");
+    echo "connected<br/>";
+    echo "app connected<br/>";
 
-echo "Template ".$tmpId." has been created!";
+    $tmpId = $app->addEmailTemplate("This is my API template", 'Test', 'Test@test.com', 'test@example.com', '', '', 'This is my API Template', 'Test Text Body', '', 'TEXT', 'Contact');
 
+    echo "Template " . $tmpId . " has been created!";
+
+} else {
+    echo "Connection Failed";
+}
 
 ?>

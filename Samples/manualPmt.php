@@ -1,32 +1,36 @@
-<?
-require("isdk.php");  
+<?php
 
-  	$cid=36;
+require_once("../src/isdk.php");
 
 $app = new iSDK;
-echo "connected<br/>";
-$app->cfgCon("connectionName");
-	echo "app connected<br/>";    
 
-$currentDate = date("d-m-Y");
-$oDate = $app->infuDate($currentDate);
-	echo "date set<br/>";
+if ($app->cfgCon("connectionName")) {
 
-$newOrder = $app->blankOrder($cid,"New Order for Contact 123", $oDate,0,0);
-	echo "New order created=".$newOrder."<br/>";
+    echo "connected<br/>";
+    echo "app connected<br/>";
 
-$result = $app->addOrderItem($newOrder,0,4,66.66,1,"JustinsStuff","new stuff!");
-	echo "item added<br/>";
+    $currentDate = date("d-m-Y");
+    $oDate = $app->infuDate($currentDate);
+    echo "date set<br/>";
 
-$operation =$app->manualPmt($newOrder,66.66,"Cash","fakemoney",false);
+    $cid = 36;
 
+    $newOrder = $app->blankOrder($cid, "New Order for Contact " . $cid, $oDate, 0, 0);
+    echo "New order created=" . $newOrder . "<br/>";
 
-if($operation) {
-	echo "payment has been added for invoiceId-".$newOrder;
+    $result = $app->addOrderItem($newOrder, 0, 4, 66.66, 1, "Infusionsoft Stuff", "new stuff!");
+    echo "item added<br/>";
+
+    $operation = $app->manualPmt($newOrder, 66.66, $oDate, "Cash", "fakemoney", false);
+
+    if ($operation) {
+        echo "payment has been added for invoiceId-" . $newOrder;
+    } else {
+        echo "Manual Payment Failed<br />";
+    }
+
+} else {
+    echo "Connection Failed";
 }
-else {
-	echo "Manual Payment Failed<br />";
-}
-
 
 ?>
