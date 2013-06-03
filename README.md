@@ -37,29 +37,29 @@ There are two ways we can connect to the API.
 Making Your First API Call
 ==================
 
-In the script you want to make the API call in you will need to do the following
+In the script you want to make the API call in you will need to do the following:
 
-    1. We need to require the iSDK
+1. We need to require the iSDK
 
-     - ```require_once('src/isdk.php');```
+ - ```require_once('src/isdk.php');```
 
-    2. Next we need to create an object
+2. Next we need to create an object
 
-     - ```$app = new iSDK();```
+ - ```$app = new iSDK();```
 
-    3. Next we need to create the connection
+3. Next we need to create the connection
 
-     - ```$app->cfgCon("connectionName");```
+ - ```$app->cfgCon("connectionName");```
 
-    4. Next we will make our first API call using the ContactService.findByEmail method. This method returns contact information by an email address we send
+4. Next we will make our first API call using the ContactService.findByEmail method. This method returns contact information by an email address we send
 
-     - ```$contacts = $app->findByEmail('test@example.com',array('Id', 'FirstName', 'LastName', 'Email));```
+ - ```$contacts = $app->findByEmail('test@example.com',array('Id', 'FirstName', 'LastName', 'Email));```
 
-     - ```This will return a contact's Id, First Name, Last Name, and Email that has the email 'test@example.com'```
+ - ```This will return a contact's Id, First Name, Last Name, and Email that has the email 'test@example.com'```
 
-    5. Finally we want to print the return information to the browser window
+5. Finally we want to print the return information to the browser window
 
-     - ```print_r($contacts);```
+ - ```print_r($contacts);```
 
 How to Use Logging
 ==================
@@ -68,11 +68,11 @@ As of Version 1.8.3 the iSDK has the ability to log API calls to a CSV. By defau
 
 To enable logging do the following:
 
-    1. In the script you want to log the API Calls of add this after you create the object
+1. In the script you want to log the API Calls of add this after you create the object
 
-     - ```$app->enableLogging(1);    //0 is off  1 is on```
+ - ```$app->enableLogging(1);    //0 is off  1 is on```
 
-    2. (Optional) You can set the location of the CSV. By default the csv is created in the same directory as isdk.php
+2. (Optional) You can set the location of the CSV. By default the csv is created in the same directory as isdk.php
 
-     - ```$app->setLog('apilog.csv');  //This is the full path to the file```
+ - ```$app->setLog('apilog.csv');  //This is the full path to the file```
 
