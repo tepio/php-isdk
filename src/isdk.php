@@ -133,7 +133,7 @@ class iSDK
 
         /* SSL Certificate Verification */
         $this->client->setSSLVerifyPeer(TRUE);
-        $this->client->setCaCertificate(__DIR__ . '\infusionsoft.pem');
+        $this->client->setCaCertificate(__DIR__ . '/infusionsoft.pem');
 
         $carray = array(
             php_xmlrpc_encode($this->key),
