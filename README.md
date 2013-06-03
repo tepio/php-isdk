@@ -52,6 +52,7 @@ OR
  - ```This will return a contact's Id, First Name, Last Name, and Email that has the email 'test@example.com'```
 5. Finally we want to print the return information to the browser window
  - ```print_r($contacts);```
+
 How to Use Logging
 ==================
 
