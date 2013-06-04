@@ -67,7 +67,7 @@ class iSDK
 
         /* SSL Certificate Verification */
         $this->client->setSSLVerifyPeer(TRUE);
-        $this->client->setCaCertificate(__DIR__ . '\infusionsoft.pem');
+        $this->client->setCaCertificate(__DIR__ . '/infusionsoft.pem');
         //$this->client->setDebug(2);
 
         $this->encKey = php_xmlrpc_encode($this->key);
@@ -143,7 +143,7 @@ class iSDK
         $this->key = $this->methodCaller("DataService.getTemporaryKey", $carray);
 
         try {
-            $connected = $this->dsGetSetting("Contact", "optiontypes");
+            $connected = $this->dsGetSetting("Application", "enabled");
         } catch (iSDKException $e) {
             throw new iSDKException("Connection Failed");
         }
