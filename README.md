@@ -21,8 +21,7 @@ There are two ways we can connect to the API.
 
     A. You will need your Application Name and Your API Key
      - ```You can find your application name in the url you goto to login. eg. https://YOURAPPNAME.infusionsoft.com```
-     - ```You can get your API Key by following this article on the
-     [http://bit.ly/14ewmJH](http://bit.ly/14ewmJH "User Guide")```
+     - ```You can get your API Key by following this article on the User Guide``` [http://ug.infusionsoft.com/article/AA-00442/0/How-do-I-enable-the-Infusionsoft-API-and-generate-an-API-Key.html](http://bit.ly/14ewmJH "User Guide")
 
     B. In src/conn.cfg.php file you will need to replace the following:
      - ```connectionName - This can be anything you want```
@@ -33,8 +32,7 @@ There are two ways we can connect to the API.
 
     A. You will need your Application Name and Your API Key
      - ```You can find your application name in the url you goto to login. eg. https://YOURAPPNAME.infusionsoft.com```
-     - ```You can get your API Key by following this article on the
-     [http://bit.ly/14ewmJH](http://bit.ly/14ewmJH "User Guide")```
+     - ```You can get your API Key by following this article on the User Guide``` [http://ug.infusionsoft.com/article/AA-00442/0/How-do-I-enable-the-Infusionsoft-API-and-generate-an-API-Key.html](http://bit.ly/14ewmJH "User Guide")
 
 Making Your First API Call
 ==================
