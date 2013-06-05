@@ -142,6 +142,8 @@ class iSDK
 
         $this->key = $this->methodCaller("DataService.getTemporaryKey", $carray);
 
+        $this->encKey = php_xmlrpc_encode($this->key);
+
         try {
             $connected = $this->dsGetSetting("Application", "enabled");
         } catch (iSDKException $e) {
@@ -177,7 +179,10 @@ class iSDK
 
         /* Set up the call */
         $call = new xmlrpcmsg($service, $callArray);
-        array_unshift($call->params, $this->encKey);
+
+        if ($service != 'DataService.getTemporaryKey') {
+            array_unshift($call->params, $this->encKey);
+        }
 
         /* Send the call */
         $now = time();
