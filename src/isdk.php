@@ -129,7 +129,7 @@ class iSDK
         }
 
         /* Return Raw PHP Types */
-        $this->client->return_type = "xml";
+        $this->client->return_type = "phpvals";
 
         /* SSL Certificate Verification */
         $this->client->setSSLVerifyPeer(TRUE);
