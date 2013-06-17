@@ -48,7 +48,7 @@ In the script you want to make the API call in you will need to do the following
 OR
  - ```$app->cfgCon("applicationName", "APIKEYGOESHERE");```
 4. Next we will make our first API call using the ContactService.findByEmail method. This method returns contact information by an email address we send
- - ```$contacts = $app->findByEmail('test@example.com',array('Id', 'FirstName', 'LastName', 'Email));```
+ - ```$contacts = $app->findByEmail('test@example.com',array('Id', 'FirstName', 'LastName', 'Email'));```
  - ```This will return a contact's Id, First Name, Last Name, and Email that has the email 'test@example.com'```
 5. Finally we want to print the return information to the browser window
  - ```print_r($contacts);```
