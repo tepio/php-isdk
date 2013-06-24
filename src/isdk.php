@@ -67,7 +67,7 @@ class iSDK
 
         /* SSL Certificate Verification */
         $this->client->setSSLVerifyPeer(TRUE);
-        $this->client->setCaCertificate(__DIR__ . '/infusionsoft.pem');
+        $this->client->setCaCertificate(dirname(__FILE__) . '/infusionsoft.pem');
         //$this->client->setDebug(2);
 
         $this->encKey = php_xmlrpc_encode($this->key);
@@ -133,7 +133,7 @@ class iSDK
 
         /* SSL Certificate Verification */
         $this->client->setSSLVerifyPeer(TRUE);
-        $this->client->setCaCertificate(__DIR__ . '/infusionsoft.pem');
+        $this->client->setCaCertificate(dirname(__FILE__) . '/infusionsoft.pem');
 
         $carray = array(
             php_xmlrpc_encode($this->key),
