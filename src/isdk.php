@@ -67,7 +67,7 @@ class iSDK
 
         /* SSL Certificate Verification */
         $this->client->setSSLVerifyPeer(TRUE);
-        $this->client->setCaCertificate(dirname(__FILE__) . '/infusionsoft.pem');
+        $this->client->setCaCertificate((__DIR__ != '__DIR__' ? __DIR__ : dirname(__FILE__)) . '/infusionsoft.pem');
         //$this->client->setDebug(2);
 
         $this->encKey = php_xmlrpc_encode($this->key);
@@ -133,7 +133,7 @@ class iSDK
 
         /* SSL Certificate Verification */
         $this->client->setSSLVerifyPeer(TRUE);
-        $this->client->setCaCertificate(dirname(__FILE__) . '/infusionsoft.pem');
+        $this->client->setCaCertificate((__DIR__ != '__DIR__' ? __DIR__ : dirname(__FILE__)) . '/infusionsoft.pem');
 
         $carray = array(
             php_xmlrpc_encode($this->key),
@@ -2627,15 +2627,6 @@ class iSDK
         return $this->methodCaller("WebTrackingService.getWebTrackingScriptUrl", $carray);
     }
 
-    /**
-     * @method isSsoEnabled
-     * @description checks to see if the app has SSO enabled (internal use only)
-     * @return bool
-     */
-    public function isSSOEnabled()
-    {
-        return $this->methodCaller("DataService.isSsoEnabled", '');
-    }
 }
 
 ?>
