@@ -1,5 +1,5 @@
 {
-    "name": "infusionsoft/PHP-iSDK",
+    "name": "infusionsoft/php-isdk",
     "require": {
         "php": ">=5.2.0"
     },
