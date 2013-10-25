@@ -69,6 +69,6 @@ Misc Functions
 ==================
 
 1. infuDate() - formats your date string for use with the API. Has an optional parameter for doing UK date formats.
- - ```infuDate('10/26/2013') will return '20131026T06:00:00'
- - ```infuDate('10/26/2013','UK') will return '2013-26-10T06:00:00'
+ - ```infuDate('10/26/2013') will return '20131026T06:00:00'```
+ - ```infuDate('10/26/2013','UK') will return '2013-26-10T06:00:00'```
 
