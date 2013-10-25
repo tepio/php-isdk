@@ -64,3 +64,11 @@ To enable logging do the following:
  - ```$app->enableLogging(1);    //0 is off  1 is on```
 2. (Optional) You can set the location of the CSV. By default the csv is created in the same directory as isdk.php
  - ```$app->setLog('apilog.csv');  //This is the full path to the file```
+
+Misc Functions
+==================
+
+1. infuDate() - formats your date string for use with the API. Has an optional parameter for doing UK date formats.
+ - ```infuDate('10/26/2013') will return '20131026T06:00:00'
+ - ```infuDate('10/26/2013','UK') will return '2013-26-10T06:00:00'
+

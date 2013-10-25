@@ -3,8 +3,8 @@
  * @method Object Oriented PHP SDK for Infusionsoft
  * @CreatedBy Justin Morris on 09-10-08
  * @UpdatedBy Michael Fairchild
- * @Updated 5/29/13
- * @iSDKVersion 1.8.3
+ * @Updated 10/26/2013
+ * @iSDKVersion 1.8.5
  * @ApplicationVersion 1.29.x
  */
 
@@ -73,11 +73,18 @@ class iSDK
         $this->encKey = php_xmlrpc_encode($this->key);
 
         /* Connection verification */
-        try {
-            $connected = $this->dsGetSetting("Application", "enabled");
-        } catch (iSDKException $e) {
-            throw new iSDKException("Connection Failed");
+
+        try{
+            $connected = $this->dsGetSetting("Application","enabled");
+
+            if(strpos($connected, 'ERROR') !== FALSE){
+                throw new iSDKException($connected);
+            }
+
+        }catch (iSDKException $e){
+            throw new iSDKException($e->getMessage());
         }
+
         return true;
     }
 
@@ -115,10 +122,10 @@ class iSDK
             if (!empty($details[$name])) {
                 if ($details[$name][2] == "i") {
                     $this->client = new xmlrpc_client("https://" . $details[$name][1] .
-                    ".infusionsoft.com/api/xmlrpc");
+                        ".infusionsoft.com/api/xmlrpc");
                 } elseif ($details[$name][2] == "m") {
                     $this->client = new xmlrpc_client("https://" . $details[$name][1] .
-                    ".mortgageprocrm.com/api/xmlrpc");
+                        ".mortgageprocrm.com/api/xmlrpc");
                 } else {
                     throw new iSDKException("Invalid application name: \"" . $name . "\"");
                 }
@@ -2047,16 +2054,22 @@ class iSDK
      * @method infuDate
      * @description returns properly formatted dates.
      * @param $dateStr
+     * @param $dateFrmt - Optional date format for UK formatted Applications
      * @return bool|string
      */
-    public function infuDate($dateStr)
+    public function infuDate($dateStr, $dateFrmt = 'US')
     {
         $dArray = date_parse($dateStr);
         if ($dArray['error_count'] < 1) {
             $tStamp =
                 mktime($dArray['hour'], $dArray['minute'], $dArray['second'], $dArray['month'],
                     $dArray['day'], $dArray['year']);
-            return date('Ymd\TH:i:s', $tStamp);
+            if ($dateFrmt == 'UK') {
+                setlocale(LC_ALL, 'en_GB');
+                return date('Y-d-m\TH:i:s', $tStamp);
+            } else {
+                return date('Ymd\TH:i:s', $tStamp);
+            }
         } else {
             foreach ($dArray['errors'] as $err) {
                 echo "ERROR: " . $err . "<br />";
