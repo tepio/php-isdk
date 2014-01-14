@@ -876,7 +876,7 @@ class iSDK
 
     /**
      * @method DataService.Count
-     * @description Gets record count based on query with option to sort
+     * @description Gets record count based on query
      * @param string $tName
      * @param array $query
      * @return int
