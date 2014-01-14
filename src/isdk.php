@@ -3,14 +3,15 @@
  * @method Object Oriented PHP SDK for Infusionsoft
  * @CreatedBy Justin Morris on 09-10-08
  * @UpdatedBy Michael Fairchild
- * @Updated 10/26/2013
- * @iSDKVersion 1.8.5
- * @ApplicationVersion 1.29.x
+ * @Updated 01/14/2014
+ * @iSDKVersion 1.8.6
+ * @ApplicationVersion 1.29.9
  */
 
 if (!function_exists('xmlrpc_encode_entitites')) {
     include("xmlrpc-3.0/lib/xmlrpc.inc");
 }
+
 class iSDKException extends Exception
 {
 }
@@ -32,7 +33,7 @@ class iSDK
      * @return bool
      * @throws iSDKException
      */
-    public function cfgCon($name, $key = "", $dbOn = "on", $type = "i")
+    public function cfgCon($name, $key = "", $dbOn = "on")
     {
         $this->debug = (($key == 'on' || $key == 'off' || $key == 'kill' || $key == 'throw') ? $key : $dbOn);
 
@@ -45,22 +46,14 @@ class iSDK
                 $details[substr($appLine, 0, strpos($appLine, ":"))] = explode(":", $appLine);
             }
             $appname = $details[$name][1];
-            $type = $details[$name][2];
             $this->key = $details[$name][3];
         }
 
-        switch ($type) {
-            case 'm':
-                $this->client = new xmlrpc_client("https://$appname.mortgageprocrm.com/api/xmlrpc");
-                break;
-            case 'i':
-            default:
-                if (!isset($appname)) {
-                    $appname = $name;
-                }
-                $this->client = new xmlrpc_client("https://$appname.infusionsoft.com/api/xmlrpc");
-                break;
+        if (!isset($appname)) {
+            $appname = $name;
         }
+
+        $this->client = new xmlrpc_client("https://$appname.infusionsoft.com/api/xmlrpc");
 
         /* Return Raw PHP Types */
         $this->client->return_type = "phpvals";
@@ -74,14 +67,14 @@ class iSDK
 
         /* Connection verification */
 
-        try{
-            $connected = $this->dsGetSetting("Application","enabled");
+        try {
+            $connected = $this->dsGetSetting("Application", "enabled");
 
-            if(strpos($connected, 'ERROR') !== FALSE){
+            if (strpos($connected, 'ERROR') !== FALSE) {
                 throw new iSDKException($connected);
             }
 
-        }catch (iSDKException $e){
+        } catch (iSDKException $e) {
             throw new iSDKException($e->getMessage());
         }
 
@@ -96,22 +89,15 @@ class iSDK
      * @param string $pass - Password
      * @param string $key - Vendor Key
      * @param string $dbOn - Error Handling On
-     * @param string $type - Infusionsoft or Mortgage Pro
      * @return bool
      * @throws iSDKException
      */
-    public function vendorCon($name, $user, $pass, $key = "", $dbOn = "on", $type = "i")
+    public function vendorCon($name, $user, $pass, $key = "", $dbOn = "on")
     {
         $this->debug = (($key == 'on' || $key == 'off' || $key == 'kill' || $key == 'throw') ? $key : $dbOn);
 
         if ($key != "" && $key != "on" && $key != "off" && $key != 'kill' && $key != 'throw') {
-            if ($type == "i") {
-                $this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
-            } else if ($type == "m") {
-                $this->client = new xmlrpc_client("https://$name.mortgageprocrm.com/api/xmlrpc");
-            } else {
-                throw new iSDKException ("Invalid application type: \"$name\"");
-            }
+            $this->client = new xmlrpc_client("https://$name.infusionsoft.com/api/xmlrpc");
             $this->key = $key;
         } else {
             include('conn.cfg.php');
@@ -183,7 +169,6 @@ class iSDK
      */
     public function methodCaller($service, $callArray)
     {
-
         /* Set up the call */
         $call = new xmlrpcmsg($service, $callArray);
 
@@ -248,7 +233,6 @@ class iSDK
     public function getProgramsForAffiliate($affiliateId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$affiliateId));
         return $this->methodCaller("AffiliateProgramService.getProgramsForAffiliate", $carray);
     }
@@ -273,7 +257,6 @@ class iSDK
     public function getResourcesForAffiliateProgram($programId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$programId));
         return $this->methodCaller("AffiliateProgramService.getResourcesForAffiliateProgram", $carray);
     }
@@ -293,7 +276,6 @@ class iSDK
     public function affClawbacks($affId, $startDate, $endDate)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$affId),
             php_xmlrpc_encode($startDate, array('auto_dates')),
             php_xmlrpc_encode($endDate, array('auto_dates')));
@@ -311,7 +293,6 @@ class iSDK
     public function affCommissions($affId, $startDate, $endDate)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$affId),
             php_xmlrpc_encode($startDate, array('auto_dates')),
             php_xmlrpc_encode($endDate, array('auto_dates')));
@@ -329,7 +310,6 @@ class iSDK
     public function affPayouts($affId, $startDate, $endDate)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$affId),
             php_xmlrpc_encode($startDate, array('auto_dates')),
             php_xmlrpc_encode($endDate, array('auto_dates')));
@@ -345,7 +325,6 @@ class iSDK
     public function affRunningTotals($affList)
     {
         $carray = array(
-
             php_xmlrpc_encode($affList));
         return $this->methodCaller("APIAffiliateService.affRunningTotals", $carray);
     }
@@ -361,7 +340,6 @@ class iSDK
     public function affSummary($affList, $startDate, $endDate)
     {
         $carray = array(
-
             php_xmlrpc_encode($affList),
             php_xmlrpc_encode($startDate, array('auto_dates')),
             php_xmlrpc_encode($endDate, array('auto_dates')));
@@ -377,7 +355,6 @@ class iSDK
     public function getRedirectLinksForAffiliate($affiliateId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$affiliateId));
         return $this->methodCaller("AffiliateService.getRedirectLinksForAffiliate", $carray);
     }
@@ -397,8 +374,8 @@ class iSDK
     {
 
         $carray = array(
-
             php_xmlrpc_encode($cMap, array('auto_dates')));
+
         $conID = $this->methodCaller("ContactService.add", $carray);
         if (!empty($cMap['Email'])) {
             if ($optReason == "") {
@@ -421,7 +398,6 @@ class iSDK
     {
 
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode($cMap, array('auto_dates')));
         return $this->methodCaller("ContactService.update", $carray);
@@ -437,7 +413,6 @@ class iSDK
     public function mergeCon($cid, $dcid)
     {
         $carray = array(
-
             php_xmlrpc_encode($cid),
             php_xmlrpc_encode($dcid));
 
@@ -455,7 +430,6 @@ class iSDK
     {
 
         $carray = array(
-
             php_xmlrpc_encode($eml),
             php_xmlrpc_encode($fMap));
         return $this->methodCaller("ContactService.findByEmail", $carray);
@@ -472,7 +446,6 @@ class iSDK
     {
 
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode($rFields));
         return $this->methodCaller("ContactService.load", $carray);
@@ -488,7 +461,6 @@ class iSDK
     public function grpAssign($cid, $gid)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$gid));
         return $this->methodCaller("ContactService.addToGroup", $carray);
@@ -504,7 +476,6 @@ class iSDK
     public function grpRemove($cid, $gid)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$gid));
         return $this->methodCaller("ContactService.removeFromGroup", $carray);
@@ -520,7 +491,6 @@ class iSDK
     public function resumeCampaignForContact($cid, $sequenceId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$sequenceId));
         return $this->methodCaller("ContactService.resumeCampaignForContact", $carray);
@@ -536,7 +506,6 @@ class iSDK
     public function campAssign($cid, $campId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$campId));
         return $this->methodCaller("ContactService.addToCampaign", $carray);
@@ -552,7 +521,6 @@ class iSDK
     public function getNextCampaignStep($cid, $campId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$campId));
         return
@@ -569,7 +537,6 @@ class iSDK
     public function getCampaigneeStepDetails($cid, $stepId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$stepId));
         return
@@ -586,7 +553,6 @@ class iSDK
     public function rescheduleCampaignStep($cidList, $campId)
     {
         $carray = array(
-
             php_xmlrpc_encode($cidList),
             php_xmlrpc_encode((int)$campId));
         return
@@ -603,7 +569,6 @@ class iSDK
     public function campRemove($cid, $campId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$campId));
         return $this->methodCaller("ContactService.removeFromCampaign", $carray);
@@ -619,7 +584,6 @@ class iSDK
     public function campPause($cid, $campId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$campId));
         return $this->methodCaller("ContactService.pauseCampaign", $carray);
@@ -635,7 +599,6 @@ class iSDK
     public function runAS($cid, $aid)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode((int)$aid));
         return $this->methodCaller("ContactService.runActionSequence", $carray);
@@ -652,7 +615,6 @@ class iSDK
     public function applyActivityHistoryTemplate($contactId, $historyId, $userId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$contactId),
             php_xmlrpc_encode((int)$historyId),
             php_xmlrpc_encode((int)$userId));
@@ -680,7 +642,6 @@ class iSDK
     public function addWithDupCheck($cMap, $checkType)
     {
         $carray = array(
-
             php_xmlrpc_encode($cMap, array('auto_dates')),
             php_xmlrpc_encode($checkType));
         return $this->methodCaller("ContactService.addWithDupCheck", $carray);
@@ -701,7 +662,6 @@ class iSDK
     public function requestCcSubmissionToken($contactId, $successUrl, $failureUrl)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$contactId),
             php_xmlrpc_encode((string)$successUrl),
             php_xmlrpc_encode((string)$failureUrl));
@@ -717,7 +677,6 @@ class iSDK
     public function requestCreditCardId($token)
     {
         $carray = array(
-
             php_xmlrpc_encode($token));
         return $this->methodCaller("CreditCardSubmissionService.requestCreditCardId", $carray);
     }
@@ -751,7 +710,6 @@ class iSDK
     public function dsAdd($tName, $iMap)
     {
         $carray = array(
-
             php_xmlrpc_encode($tName),
             php_xmlrpc_encode($iMap, array('auto_dates')));
 
@@ -768,7 +726,6 @@ class iSDK
     public function dsAddWithImage($tName, $iMap)
     {
         $carray = array(
-
             php_xmlrpc_encode($tName),
             php_xmlrpc_encode($iMap, array('auto_dates', 'auto_base64')));
 
@@ -785,7 +742,6 @@ class iSDK
     public function dsDelete($tName, $id)
     {
         $carray = array(
-
             php_xmlrpc_encode($tName),
             php_xmlrpc_encode((int)$id));
 
@@ -803,7 +759,6 @@ class iSDK
     public function dsUpdate($tName, $id, $iMap)
     {
         $carray = array(
-
             php_xmlrpc_encode($tName),
             php_xmlrpc_encode((int)$id),
             php_xmlrpc_encode($iMap, array('auto_dates')));
@@ -822,7 +777,6 @@ class iSDK
     public function dsUpdateWithImage($tName, $id, $iMap)
     {
         $carray = array(
-
             php_xmlrpc_encode($tName),
             php_xmlrpc_encode((int)$id),
             php_xmlrpc_encode($iMap, array('auto_dates', 'auto_base64')));
@@ -841,7 +795,6 @@ class iSDK
     public function dsLoad($tName, $id, $rFields)
     {
         $carray = array(
-
             php_xmlrpc_encode($tName),
             php_xmlrpc_encode((int)$id),
             php_xmlrpc_encode($rFields));
@@ -863,7 +816,6 @@ class iSDK
     public function dsFind($tName, $limit, $page, $field, $value, $rFields)
     {
         $carray = array(
-
             php_xmlrpc_encode($tName),
             php_xmlrpc_encode((int)$limit),
             php_xmlrpc_encode((int)$page),
@@ -911,7 +863,6 @@ class iSDK
     public function dsQueryOrderBy($tName, $limit, $page, $query, $rFields, $orderByField, $ascending = TRUE)
     {
         $carray = array(
-
             php_xmlrpc_encode($tName),
             php_xmlrpc_encode((int)$limit),
             php_xmlrpc_encode((int)$page),
@@ -921,6 +872,23 @@ class iSDK
             php_xmlrpc_encode((bool)$ascending));
 
         return $this->methodCaller("DataService.query", $carray);
+    }
+
+    /**
+     * @method DataService.Count
+     * @description Gets record count based on query with option to sort
+     * @param string $tName
+     * @param array $query
+     * @return int
+     */
+
+    public function dsCount($tName, $query)
+    {
+        $carray = array(
+            php_xmlrpc_encode($tName),
+            php_xmlrpc_encode($query, array('auto_dates'))
+        );
+        return $this->methodCaller("DataService.count", $carray);
     }
 
     /**
@@ -955,7 +923,6 @@ class iSDK
     {
         $password = strtolower(md5($password));
         $carray = array(
-
             php_xmlrpc_encode($userName),
             php_xmlrpc_encode($password));
 
@@ -972,7 +939,6 @@ class iSDK
     public function updateCustomField($fieldId, $fieldValues)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$fieldId),
             php_xmlrpc_encode($fieldValues));
         return $this->methodCaller("DataService.updateCustomField", $carray);
@@ -995,7 +961,6 @@ class iSDK
     public function addFreeTrial($name, $description, $freeTrialDays, $hidePrice, $subscriptionPlanId)
     {
         $carray = array(
-
             php_xmlrpc_encode((string)$name),
             php_xmlrpc_encode((string)$description),
             php_xmlrpc_encode((int)$freeTrialDays),
@@ -1013,7 +978,6 @@ class iSDK
     public function getFreeTrial($trialId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$trialId));
         return $this->methodCaller("DiscountService.getFreeTrial", $carray);
     }
@@ -1036,7 +1000,6 @@ class iSDK
     public function addOrderTotalDiscount($name, $description, $applyDiscountToCommission, $percentOrAmt, $amt, $payType)
     {
         $carray = array(
-
             php_xmlrpc_encode((string)$name),
             php_xmlrpc_encode((string)$description),
             php_xmlrpc_encode((int)$applyDiscountToCommission),
@@ -1055,7 +1018,6 @@ class iSDK
     public function getOrderTotalDiscount($id)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$id));
         return $this->methodCaller("DiscountService.getOrderTotalDiscount", $carray);
     }
@@ -1072,7 +1034,6 @@ class iSDK
     public function addCategoryDiscount($name, $description, $applyDiscountToCommission, $amt)
     {
         $carray = array(
-
             php_xmlrpc_encode((string)$name),
             php_xmlrpc_encode((string)$description),
             php_xmlrpc_encode((int)$applyDiscountToCommission),
@@ -1089,7 +1050,6 @@ class iSDK
     public function getCategoryDiscount($id)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$id));
         return $this->methodCaller("DiscountService.getCategoryDiscount", $carray);
     }
@@ -1104,7 +1064,6 @@ class iSDK
     public function addCategoryAssignmentToCategoryDiscount($categoryDiscountId, $productCategoryId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$categoryDiscountId),
             php_xmlrpc_encode((int)$productCategoryId));
         return $this->methodCaller("DiscountService.addCategoryAssignmentToCategoryDiscount", $carray);
@@ -1119,7 +1078,6 @@ class iSDK
     public function getCategoryAssignmentsForCategoryDiscount($id)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$id));
         return $this->methodCaller("DiscountService.getCategoryAssignmentsForCategoryDiscount", $carray);
     }
@@ -1140,7 +1098,6 @@ class iSDK
     public function addProductTotalDiscount($name, $description, $applyDiscountToCommission, $productId, $percentOrAmt, $amt)
     {
         $carray = array(
-
             php_xmlrpc_encode((string)$name),
             php_xmlrpc_encode((string)$description),
             php_xmlrpc_encode((int)$applyDiscountToCommission),
@@ -1159,7 +1116,6 @@ class iSDK
     public function getProductTotalDiscount($id)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$id));
         return $this->methodCaller("DiscountService.getProductTotalDiscount", $carray);
     }
@@ -1179,7 +1135,6 @@ class iSDK
     public function addShippingTotalDiscount($name, $description, $applyDiscountToCommission, $percentOrAmt, $amt)
     {
         $carray = array(
-
             php_xmlrpc_encode((string)$name),
             php_xmlrpc_encode((string)$description),
             php_xmlrpc_encode((int)$applyDiscountToCommission),
@@ -1197,7 +1152,6 @@ class iSDK
     public function getShippingTotalDiscount($id)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$id));
         return $this->methodCaller("DiscountService.getShippingTotalDiscount", $carray);
     }
@@ -1230,7 +1184,6 @@ class iSDK
                                 $header, $strRecvdDate, $strSentDate, $emailSentType = 1)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cId),
             php_xmlrpc_encode($fromName),
             php_xmlrpc_encode($fromAddress),
@@ -1257,7 +1210,6 @@ class iSDK
     public function getAvailableMergeFields($mergeContext)
     {
         $carray = array(
-
             php_xmlrpc_encode($mergeContext));
         return $this->methodCaller("APIEmailService.getAvailableMergeFields", $carray);
     }
@@ -1279,7 +1231,6 @@ class iSDK
     public function sendEmail($conList, $fromAddress, $toAddress, $ccAddresses, $bccAddresses, $contentType, $subject, $htmlBody, $txtBody)
     {
         $carray = array(
-
             php_xmlrpc_encode($conList),
             php_xmlrpc_encode($fromAddress),
             php_xmlrpc_encode($toAddress),
@@ -1304,7 +1255,6 @@ class iSDK
     public function sendTemplate($conList, $template)
     {
         $carray = array(
-
             php_xmlrpc_encode($conList),
             php_xmlrpc_encode($template));
         return $this->methodCaller("APIEmailService.sendEmail", $carray);
@@ -1330,7 +1280,6 @@ class iSDK
                                         $txtBody)
     {
         $carray = array(
-
             php_xmlrpc_encode($title),
             php_xmlrpc_encode($category = ''),
             php_xmlrpc_encode($fromAddress),
@@ -1364,7 +1313,6 @@ class iSDK
     public function addEmailTemplate($title, $category, $fromAddress, $toAddress, $ccAddresses, $bccAddresses, $subject, $txtBody, $htmlBody, $contentType, $mergeContext)
     {
         $carray = array(
-
             php_xmlrpc_encode($title),
             php_xmlrpc_encode($category),
             php_xmlrpc_encode($fromAddress),
@@ -1436,7 +1384,6 @@ class iSDK
     public function optStatus($email)
     {
         $carray = array(
-
             php_xmlrpc_encode($email));
         return $this->methodCaller("APIEmailService.getOptStatus", $carray);
     }
@@ -1452,7 +1399,6 @@ class iSDK
     public function optIn($email, $reason = 'Contact Was Opted In through the API')
     {
         $carray = array(
-
             php_xmlrpc_encode($email),
             php_xmlrpc_encode($reason));
         return $this->methodCaller("APIEmailService.optIn", $carray);
@@ -1468,7 +1414,6 @@ class iSDK
     public function optOut($email, $reason = 'Contact Was Opted Out through the API')
     {
         $carray = array(
-
             php_xmlrpc_encode($email),
             php_xmlrpc_encode($reason));
         return $this->methodCaller("APIEmailService.optOut", $carray);
@@ -1488,7 +1433,6 @@ class iSDK
     {
 
         $carray = array(
-
             php_xmlrpc_encode((int)$fileID));
         $result = $this->methodCaller("FileService.getFile", $carray);
         return $result;
@@ -1507,13 +1451,11 @@ class iSDK
         $result = 0;
         if ($cid == 0) {
             $carray = array(
-
                 php_xmlrpc_encode($fileName),
                 php_xmlrpc_encode($base64Enc));
             $result = $this->methodCaller("FileService.uploadFile", $carray);
         } else {
             $carray = array(
-
                 php_xmlrpc_encode((int)$cid),
                 php_xmlrpc_encode($fileName),
                 php_xmlrpc_encode($base64Enc));
@@ -1532,7 +1474,6 @@ class iSDK
     public function replaceFile($fileID, $base64Enc)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$fileID),
             php_xmlrpc_encode($base64Enc));
         $result = $this->methodCaller("FileService.replaceFile", $carray);
@@ -1549,7 +1490,6 @@ class iSDK
     public function renameFile($fileID, $fileName)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$fileID),
             php_xmlrpc_encode($fileName));
         $result = $this->methodCaller("FileService.renameFile", $carray);
@@ -1565,7 +1505,6 @@ class iSDK
     public function getDownloadUrl($fileID)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$fileID));
         $result = $this->methodCaller("FileService.getDownloadUrl", $carray);
         return $result;
@@ -1586,7 +1525,6 @@ class iSDK
     public function achieveGoal($integration, $callName, $contactId)
     {
         $carray = array(
-
             php_xmlrpc_encode((string)$integration),
             php_xmlrpc_encode((string)$callName),
             php_xmlrpc_encode((int)$contactId));
@@ -1606,7 +1544,6 @@ class iSDK
     public function deleteInvoice($Id)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$Id));
         return $this->methodCaller("InvoiceService.deleteInvoice", $carray);
     }
@@ -1620,7 +1557,6 @@ class iSDK
     public function deleteSubscription($Id)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$Id));
         return $this->methodCaller("InvoiceService.deleteSubscription", $carray);
     }
@@ -1634,7 +1570,6 @@ class iSDK
     public function getPayments($Id)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$Id));
         return $this->methodCaller("InvoiceService.getPayments", $carray);
     }
@@ -1649,7 +1584,6 @@ class iSDK
     public function setInvoiceSyncStatus($Id, $syncStatus)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$Id),
             php_xmlrpc_encode($syncStatus));
         return $this->methodCaller("InvoiceService.setInvoiceSyncStatus", $carray);
@@ -1665,7 +1599,6 @@ class iSDK
     public function setPaymentSyncStatus($Id, $Status)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$Id),
             php_xmlrpc_encode($Status));
         return $this->methodCaller("InvoiceService.setPaymentSyncStatus", $carray);
@@ -1680,7 +1613,6 @@ class iSDK
     public function getPluginStatus($className)
     {
         $carray = array(
-
             php_xmlrpc_encode($className));
         return $this->methodCaller("InvoiceService.getPluginStatus", $carray);
     }
@@ -1711,7 +1643,6 @@ class iSDK
     public function manualPmt($invId, $amt, $payDate, $payType, $payDesc, $bypassComm)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$invId),
             php_xmlrpc_encode($amt),
             php_xmlrpc_encode($payDate, array('auto_dates')),
@@ -1737,7 +1668,6 @@ class iSDK
     public function commOverride($invId, $affId, $prodId, $percentage, $amt, $payType, $desc, $date)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$invId),
             php_xmlrpc_encode((int)$affId),
             php_xmlrpc_encode((int)$prodId),
@@ -1778,7 +1708,6 @@ class iSDK
     public function addOrderItem($ordId, $prodId, $type, $price, $qty, $desc, $notes)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$ordId),
             php_xmlrpc_encode((int)$prodId),
             php_xmlrpc_encode((int)$type),
@@ -1809,7 +1738,6 @@ class iSDK
     public function payPlan($ordId, $aCharge, $ccId, $merchId, $retry, $retryAmt, $initialPmt, $initialPmtDate, $planStartDate, $numPmts, $pmtDays)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$ordId),
             php_xmlrpc_encode($aCharge),
             php_xmlrpc_encode((int)$ccId),
@@ -1839,7 +1767,6 @@ class iSDK
     public function addRecurring($cid, $allowDup, $progId, $merchId, $ccId, $affId, $daysToCharge)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode($allowDup),
             php_xmlrpc_encode((int)$progId),
@@ -1869,7 +1796,6 @@ class iSDK
     public function addRecurringAdv($cid, $allowDup, $progId, $qty, $price, $allowTax, $merchId, $ccId, $affId, $daysToCharge)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode($allowDup),
             php_xmlrpc_encode((int)$progId),
@@ -1892,7 +1818,6 @@ class iSDK
     public function amtOwed($invId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$invId));
         return $this->methodCaller("InvoiceService.calculateAmountOwed", $carray);
     }
@@ -1906,7 +1831,6 @@ class iSDK
     public function getInvoiceId($orderId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$orderId));
         return $this->methodCaller("InvoiceService.getInvoiceId", $carray);
     }
@@ -1920,7 +1844,6 @@ class iSDK
     public function getOrderId($invoiceId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$invoiceId));
         return $this->methodCaller("InvoiceService.getOrderId", $carray);
     }
@@ -1938,7 +1861,6 @@ class iSDK
     public function chargeInvoice($invId, $notes, $ccId, $merchId, $bypassComm)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$invId),
             php_xmlrpc_encode($notes),
             php_xmlrpc_encode((int)$ccId),
@@ -1960,7 +1882,6 @@ class iSDK
     public function blankOrder($conId, $desc, $oDate, $leadAff, $saleAff)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$conId),
             php_xmlrpc_encode($desc),
             php_xmlrpc_encode($oDate, array('auto_dates')),
@@ -1978,7 +1899,6 @@ class iSDK
     public function recurringInvoice($rid)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$rid));
         return $this->methodCaller("InvoiceService.createInvoiceForRecurring", $carray);
     }
@@ -1993,7 +1913,6 @@ class iSDK
     public function locateCard($cid, $last4)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$cid),
             php_xmlrpc_encode($last4));
         return $this->methodCaller("InvoiceService.locateExistingCard", $carray);
@@ -2011,7 +1930,6 @@ class iSDK
         $creditCard = is_array($creditCard) ? $creditCard : (int)$creditCard;
 
         $carray = array(
-
             php_xmlrpc_encode($creditCard));
         return $this->methodCaller("InvoiceService.validateCreditCard", $carray);
     }
@@ -2026,7 +1944,6 @@ class iSDK
     public function updateSubscriptionNextBillDate($subscriptionId, $nextBillDate)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$subscriptionId),
             php_xmlrpc_encode($nextBillDate, array('auto_dates')));
         return $this->methodCaller("InvoiceService.updateJobRecurringNextBillDate", $carray);
@@ -2041,7 +1958,6 @@ class iSDK
     public function recalculateTax($invoiceId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$invoiceId));
         return $this->methodCaller("InvoiceService.recalculateTax", $carray);
     }
@@ -2175,7 +2091,6 @@ class iSDK
     public function placeOrder($contactId, $creditCardId, $payPlanId, $productIds, $subscriptionIds, $processSpecials, $promoCodes, $leadAff = 0, $saleAff = 0)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$contactId),
             php_xmlrpc_encode((int)$creditCardId),
             php_xmlrpc_encode((int)$payPlanId),
@@ -2201,7 +2116,6 @@ class iSDK
     public function getInventory($productId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$productId));
         return $this->methodCaller("ProductService.getInventory", $carray);
     }
@@ -2215,7 +2129,6 @@ class iSDK
     public function incrementInventory($productId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$productId));
         return $this->methodCaller("ProductService.incrementInventory", $carray);
     }
@@ -2229,7 +2142,6 @@ class iSDK
     function decrementInventory($productId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$productId));
         return $this->methodCaller("ProductService.decrementInventory", $carray);
     }
@@ -2244,7 +2156,6 @@ class iSDK
     public function increaseInventory($productId, $quantity)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$productId),
             php_xmlrpc_encode((int)$quantity));
         return $this->methodCaller("ProductService.increaseInventory", $carray);
@@ -2260,7 +2171,6 @@ class iSDK
     public function decreaseInventory($productId, $quantity)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$productId),
             php_xmlrpc_encode((int)$quantity));
         return $this->methodCaller("ProductService.decreaseInventory", $carray);
@@ -2275,7 +2185,6 @@ class iSDK
     public function deactivateCreditCard($creditCardId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$creditCardId));
         return $this->methodCaller("ProductService.deactivateCreditCard", $carray);
     }
@@ -2295,7 +2204,6 @@ class iSDK
     public function savedSearchAllFields($savedSearchId, $userId, $page)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$savedSearchId),
             php_xmlrpc_encode((int)$userId),
             php_xmlrpc_encode((int)$page));
@@ -2314,7 +2222,6 @@ class iSDK
     public function savedSearch($savedSearchId, $userId, $page, $fields)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$savedSearchId),
             php_xmlrpc_encode((int)$userId),
             php_xmlrpc_encode((int)$page),
@@ -2332,7 +2239,6 @@ class iSDK
     public function getAvailableFields($savedSearchId, $userId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$savedSearchId),
             php_xmlrpc_encode((int)$userId));
         return $this->methodCaller("SearchService.getAllReportColumns", $carray);
@@ -2347,7 +2253,6 @@ class iSDK
     public function getDefaultQuickSearch($userId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$userId));
         return $this->methodCaller("SearchService.getDefaultQuickSearch", $carray);
     }
@@ -2361,7 +2266,6 @@ class iSDK
     public function getQuickSearches($userId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$userId));
         return $this->methodCaller("SearchService.getAvailableQuickSearches", $carray);
     }
@@ -2379,7 +2283,6 @@ class iSDK
     public function quickSearch($quickSearchType, $userId, $filterData, $page, $limit)
     {
         $carray = array(
-
             php_xmlrpc_encode($quickSearchType),
             php_xmlrpc_encode((int)$userId),
             php_xmlrpc_encode($filterData),
@@ -2405,7 +2308,6 @@ class iSDK
     public function addMoveNotes($ticketList, $moveNotes, $moveToStageId, $notifyIds)
     {
         $carray = array(
-
             php_xmlrpc_encode($ticketList),
             php_xmlrpc_encode($moveNotes),
             php_xmlrpc_encode($moveToStageId),
@@ -2425,7 +2327,6 @@ class iSDK
     public function moveTicketStage($ticketID, $ticketStage, $moveNotes, $notifyIds)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$ticketID),
             php_xmlrpc_encode($ticketStage),
             php_xmlrpc_encode($moveNotes),
@@ -2468,7 +2369,6 @@ class iSDK
     public function getFlatRateShippingOption($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getFlatRateShippingOption", $carray);
     }
@@ -2482,7 +2382,6 @@ class iSDK
     public function getOrderTotalShippingOption($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getOrderTotalShippingOption", $carray);
     }
@@ -2496,7 +2395,6 @@ class iSDK
     public function getOrderTotalShippingRanges($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getOrderTotalShippingRanges", $carray);
     }
@@ -2510,7 +2408,6 @@ class iSDK
     public function getProductBasedShippingOption($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getProductBasedShippingOption", $carray);
     }
@@ -2524,7 +2421,6 @@ class iSDK
     public function getProductShippingPricesForProductShippingOption($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getProductShippingPricesForProductShippingOption", $carray);
     }
@@ -2538,7 +2434,6 @@ class iSDK
     public function getOrderQuantityShippingOption($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getOrderQuantityShippingOption", $carray);
     }
@@ -2552,7 +2447,6 @@ class iSDK
     public function getWeightBasedShippingOption($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getWeightBasedShippingOption", $carray);
     }
@@ -2566,7 +2460,6 @@ class iSDK
     public function getWeightBasedShippingRanges($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getWeightBasedShippingRanges", $carray);
     }
@@ -2580,7 +2473,6 @@ class iSDK
     public function getUpsShippingOption($optionId)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$optionId));
         return $this->methodCaller("ShippingService.getUpsShippingOption", $carray);
     }
@@ -2609,7 +2501,6 @@ class iSDK
     public function getWebFormHtml($webFormId = 0)
     {
         $carray = array(
-
             php_xmlrpc_encode((int)$webFormId));
         return $this->methodCaller("WebFormService.getHTML", $carray);
     }
